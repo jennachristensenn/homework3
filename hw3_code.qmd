@@ -1,0 +1,114 @@
+---
+title: "Control Flow & Functions"
+format: html
+editor: visual
+---
+
+```{r, echo = FALSE}
+load("hw2_list.rda")
+```
+
+## Task 1: Control Flow Practice
+
+1. Create a new col in each data frame
+```{r}
+bp_list[["treatment"]]$status <- character(20) 
+bp_list[["placebo"]]$status <- character(10)
+```
+
+2. loop for non-placebo data
+```{r}
+for (i in seq_along(bp_list[["treatment"]]$post_bp)) {
+  if (bp_list[["treatment"]]$post_bp[i] <= 120) {
+    bp_list[["treatment"]]$status[i] <- "optimal"
+  } else if (bp_list[["treatment"]]$post_bp[i] > 120 && bp_list[["treatment"]]$post_bp[i] <= 130) {bp_list[["treatment"]]$status[i] <- "borderline"
+  } else if (bp_list[["treatment"]]$post_bp[i] > 130) {
+    bp_list[["treatment"]]$status[i] <- "high"
+  }
+}
+
+print(bp_list[["treatment"]])
+```
+
+3. Loop for placebo data
+```{r}
+for (i in seq_along(bp_list[["placebo"]]$post_bp)) {
+  if (bp_list[["placebo"]]$post_bp[i] <= 120) {
+    bp_list[["placebo"]]$status[i] <- "optimal"
+  } else if (bp_list[["placebo"]]$post_bp[i] > 120 && bp_list[["placebo"]]$post_bp[i] <= 130) {bp_list[["placebo"]]$status[i] <- "borderline"
+  } else if (bp_list[["placebo"]]$post_bp[i] > 130) {
+    bp_list[["placebo"]]$status[i] <- "high"
+  }
+}
+print(bp_list[["placebo"]])
+```
+
+## Task 2: Function Writing
+
+1. Writing a function for other data sets 
+```{r}
+find_summary_stats <- function(bp_list, stat = "mean") {
+  my_fun <- get(stat)
+  result <- numeric()
+  # stats for treatment df
+  treatment_df <- bp_list[["treatment"]]
+  result <- c(
+    result,
+    my_fun(treatment_df$pre_bp),
+    my_fun(treatment_df$post_bp),
+    my_fun(treatment_df$diff_bp)
+  )
+  # stats for placebo df
+  placebo_df <- bp_list[["placebo"]]
+  result <- c(
+    result,
+    my_fun(placebo_df$pre_bp),
+    my_fun(placebo_df$post_bp),
+    my_fun(placebo_df$diff_bp)
+  )
+  # defining the names of results
+  result_names <- c(
+    "treatment_pre_bp",
+    "treatment_post_bp",
+    "treatment_diff_bp",
+    "placebo_pre_bp",
+    "placebo_post_bp",
+    "placebo_diff_bp"
+  )
+  names(result) <- result_names
+  result_list <- as.list(result)
+  return(result_list)
+  
+}
+```
+
+2. Checking function  with various examples
+```{r}
+result <- find_summary_stats(bp_list, stat = "mean")
+print(result)
+```
+
+```{r}
+result <- find_summary_stats(bp_list)
+print(result)
+```
+
+```{r}
+result <- find_summary_stats(bp_list, stat = "var")
+print(result)
+```
+
+```{r}
+result <- find_summary_stats(bp_list, stat = "sd")
+print(result)
+```
+```{r}
+result <- find_summary_stats(bp_list, stat = "min")
+print(result)
+```
+
+
+```{r}
+result <- find_summary_stats(bp_list, stat = "max")
+print(result)
+```
